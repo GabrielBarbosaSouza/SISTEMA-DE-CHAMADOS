@@ -10,6 +10,7 @@ try:
         password="Gabriel1!",
         database="script"
     )
+    
 except mysql.connector.Error as erro:
     print(f"[red]ERRO!: {erro}")
     exit()
@@ -20,6 +21,7 @@ def abrir_chamados():
     titulo = input("Título: ")
     descricao = input("Descrição: ")
     categoria = input("Categoria: ")
+    
     while True:
         prioridade = input("Prioridade ([Baixa/Media/Alta]): ").lower()
 
@@ -54,7 +56,8 @@ def abrir_chamados():
     print("\n[green]Chamado aberto![/]")
 
 def listar_chamados():
-    print()
+    print("\n[cyan]=== CHAMADOS ===[/]")
+    
     cursor.execute("""
         SELECT id, titulo, categoria, prioridade, status
         FROM chamados
@@ -85,7 +88,7 @@ def fechar_chamados():
             print("Digite apenas números.")
     
     cursor.execute(
-    "SELECT status FROM chamados WHERE id = %s",(id_chamado,))
+    "SELECT id FROM chamados WHERE id = %s",(id_chamado,))
 
     resultado = cursor.fetchone()
 
@@ -130,7 +133,7 @@ def main():
                 sleep(1)
                 print("[red].[/]", end='')
             
-            print("Volte sempre!")
+            print("\nVolte sempre!")
     
             cursor.close()
             db.close()
