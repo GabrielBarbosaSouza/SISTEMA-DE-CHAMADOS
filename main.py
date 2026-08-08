@@ -3,6 +3,7 @@ from rich import print
 from time import sleep
 from InquirerPy import inquirer
 
+
 db = mysql.connector.connect(
     host="localhost",
     user="root",
