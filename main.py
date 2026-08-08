@@ -3,13 +3,17 @@ from rich import print
 from time import sleep
 from InquirerPy import inquirer
 
-
-db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="Gabriel1!",
-    database="script"
-)
+try:
+    db = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Gabriel1!",
+        database="script"
+    )
+    
+except mysql.connector.Error as erro:
+    print(f"[red]ERRO!: {erro}")
+    exit()
 
 cursor = db.cursor()
 
@@ -17,26 +21,45 @@ def abrir_chamados():
     titulo = input("Título: ")
     descricao = input("Descrição: ")
     categoria = input("Categoria: ")
+    
     while True:
         prioridade = input("Prioridade ([Baixa/Media/Alta]): ").lower()
 
         if prioridade in ["baixa", "media", "alta"]:
             break
         print("Prioridade inválida.")
-        
+    
+    
+    while True:
+        matricula = input("Seu ID (4 primeiros dígitos do CPF): ")
+
+        if len(matricula) == 4 and matricula.isdigit():
+            break
+        print("Digite exatamente 4 números.")
+
+    cursor.execute("SELECT id FROM usuarios WHERE matricula = %s", (matricula,))
+
+    resultado = cursor.fetchone()
+    if resultado is None:
+        print("Usuário não encontrado.")
+        return
+    
+    id_usuario = resultado[0]
+
     cursor.execute("""
         INSERT INTO chamados
         (titulo, descricao, categoria, prioridade, id_usuario)
         VALUES (%s, %s, %s, %s, %s)
-    """, (titulo, descricao, categoria, prioridade, 1))
+    """, (titulo, descricao, categoria, prioridade, id_usuario))
 
     db.commit()
     print("\n[green]Chamado aberto![/]")
 
 def listar_chamados():
-    print()
+    print("\n[cyan]=== CHAMADOS ===[/]")
+    
     cursor.execute("""
-        SELECT id, titulo, status
+        SELECT id, titulo, categoria, prioridade, status
         FROM chamados
     """)
     
@@ -45,28 +68,46 @@ def listar_chamados():
         print("\n[red]Nenhum chamado encontrado.[/]")
         return
     
-    for id_chamado, titulo, status in chamados:
+    for id_chamado, titulo, categoria, prioridade, status in chamados:
         print(
             f"ID: {id_chamado} | "
             f"Título: {titulo} | "
+            f"Categoria: {categoria} | "
+            f"Prioridade: {prioridade} | "
             f"Status: {status}"
         )
 
 def fechar_chamados():
     listar_chamados()
 
-    id_chamado = input("\nID do chamado que deseja fechar: ")
+    while True:
+        try:
+            id_chamado = int(input("\nID do chamado que deseja fechar: "))
+            break
+        except ValueError:
+            print("Digite apenas números.")
+    
+    cursor.execute(
+    "SELECT id FROM chamados WHERE id = %s",(id_chamado,))
+
+    resultado = cursor.fetchone()
+
+    if resultado is None:
+        print("Chamado não encontrado.")
+        return
+
     cursor.execute("""
         UPDATE chamados
         SET status = 'Fechado'
         WHERE id = %s
+        AND status != 'Fechado'
     """, (id_chamado,))
 
     if cursor.rowcount > 0:
         db.commit()
         print("\n[green]Chamado fechado![/]")
     else:
-        print("\n[red]Chamado não encontrado.[/]")
+        print("\n[yellow]Esse chamado já está fechado.[/]")
 
 
 def main():   
@@ -92,7 +133,7 @@ def main():
                 sleep(1)
                 print("[red].[/]", end='')
             
-            print("Volte sempre!")
+            print("\nVolte sempre!")
     
             cursor.close()
             db.close()
