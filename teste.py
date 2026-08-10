@@ -293,10 +293,11 @@ def main():
             choices = [
                 "1 - Abrir chamado",
                 "2 - Listar chamado",
-                "3 - Ver detalhes do chamado",
-                "4 - Fechar chamado",
-                "5 - Cadastrar usuario",
-                "6 - Sair"
+                "3 - Ver os meus chamados",
+                "4 - Ver detalhes do chamado",
+                "5 - Fechar chamado",
+                "6 - Cadastrar usuario",
+                "7 - Sair"
             ]
         ).execute()
 
@@ -304,13 +305,15 @@ def main():
             abrir_chamados()
         elif opcao == "2 - Listar chamado":
             listar_chamados()
-        elif opcao == "3 - Ver detalhes do chamado":
+        # elif opcao == "3 - Ver os meus chamados":
+            
+        elif opcao == "4 - Ver detalhes do chamado":
             detalhes_chamado()
-        elif opcao == "4 - Fechar chamado":
-            fechar_chamados()
-        elif opcao == "5 - Cadastrar usuario":
-            cadastrar_usuario()
-        elif opcao == "6 - Sair":
+        elif opcao == "5 - Fechar chamado":
+            fechar_chamados() 
+        elif opcao == "6 - Cadastrar usuario":
+             cadastrar_usuario()
+        elif opcao == "7 - Sair":
             sair()
             break
         else:
