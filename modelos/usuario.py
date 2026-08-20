@@ -1,5 +1,6 @@
 class Usuario():
-    def __init__(self, nome, email, matricula):
-        self.nome: str = nome
-        self.email: str = email
-        self.matricula: str = matricula
+    def __init__(self, nome: str, email: str, matricula: str, perfil: str = "Usuario"):
+        self.nome = nome
+        self.email = email
+        self.matricula = matricula
+        self.perfil = perfil
